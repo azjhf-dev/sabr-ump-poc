@@ -216,21 +216,19 @@ function renderClips() {
 
 /* ---------- ffmpeg.wasm render ---------- */
 let ffmpeg = null;
+async function fetchFileLocal(f) {
+  if (typeof f === 'string') f = await fetch(f).then((r) => r.blob());
+  return new Uint8Array(await f.arrayBuffer());
+}
+
 async function getFFmpeg() {
   if (ffmpeg) return ffmpeg;
   let failed = true;
-  const base = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd';
   ffmpeg = new FFmpegWASM.FFmpeg();
   ffmpeg.on('progress', ({ progress }) => { $('#bar').style.width = Math.round(progress * 100) + '%'; });
   ffmpeg.on('log', ({ message }) => { if (/error|fail/i.test(message)) log(message); });
   log('loading ffmpeg.wasm core (~30 MB, first time only)...');
-  const workerURL = await FFmpegUtil.toBlobURL('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js', 'text/javascript');
-  await ffmpeg.load({
-    coreURL: await FFmpegUtil.toBlobURL(`${base}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await FFmpegUtil.toBlobURL(`${base}/ffmpeg-core.wasm`, 'application/wasm'),
-    classWorkerURL: workerURL,
-    workerLoadURL: workerURL,
-  });
+  await ffmpeg.load({ coreURL: 'vendor/ffmpeg-core.js', wasmURL: 'vendor/ffmpeg-core.wasm' });
   failed = false;
   log('ffmpeg.wasm ready');
   if (!failed) return ffmpeg;
@@ -270,10 +268,10 @@ async function renderClip(clip, idx) {
   const ff = await getFFmpeg();
   const remux = $('#remuxOnly').checked;
   const cues = state.captions.filter(c => c.end > clip.start && c.start < clip.end);
-  await ff.writeFile('in' + idx + (state.videoBlob.type.includes('mp4') ? '.mp4' : '.webm'), await FFmpegUtil.fetchFile(state.videoBlob));
+  await ff.writeFile('in' + idx + (state.videoBlob.type.includes('mp4') ? '.mp4' : '.webm'), await fetchFileLocal(state.videoBlob));
   const inName = 'in' + idx + (state.videoBlob.type.includes('mp4') ? '.mp4' : '.webm');
   const args = ['-ss', clip.start.toFixed(2), '-to', clip.end.toFixed(2), '-i', inName];
-  if (state.audioBlob) { await ff.writeFile('aud' + idx + '.webm', await FFmpegUtil.fetchFile(state.audioBlob)); args.push('-i', 'aud' + idx + '.webm'); }
+  if (state.audioBlob) { await ff.writeFile('aud' + idx + '.webm', await fetchFileLocal(state.audioBlob)); args.push('-i', 'aud' + idx + '.webm'); }
 
   if (remux || !cues.length) {
     if (!cues.length && !remux) log(`clip ${idx + 1}: no captions in range, remuxing without burn`);
@@ -288,7 +286,7 @@ async function renderClip(clip, idx) {
   for (let i = 0; i < cues.length; i++) {
     const b = await captionPng(cues[i].text, $('#capPos').value, +$('#capSize').value || 56);
     const name = `cap${idx}_${i}.png`;
-    await ff.writeFile(name, await FFmpegUtil.fetchFile(b));
+    await ff.writeFile(name, await fetchFileLocal(b));
     pngs.push({ name, s: Math.max(0, cues[i].start - clip.start), e: cues[i].end - clip.start });
     args.push('-loop', '1', '-i', name);
   }
