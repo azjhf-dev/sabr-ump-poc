@@ -1,0 +1,70 @@
+{
+ "post": {
+  "id": "1y2p3im",
+  "title": "github-Reversing YouTube's SABR: UMP container, PO-token binding, and playing it on-device through a hidden youtube.com page",
+  "author": "lovespeedtest",
+  "score": 37,
+  "created": "2026-11-22T13:16:05.649000+0000",
+  "permalink": "/r/ReverseEngineering/comments/1y2p3im/githubreversing_youtubes_sabr_ump_container/",
+  "comment_count": 5,
+  "subreddit": "ReverseEngineering",
+  "selftext": ""
+ },
+ "comments": [
+  {
+   "id": "19t0vu4zqj8u8",
+   "parent_id": "",
+   "author": "Pitiful_Conflict7031",
+   "score": 6,
+   "created": "2026-11-22T14:35:10.772000+0000",
+   "depth": 0,
+   "permalink": "/r/ReverseEngineering/comments/1y2p3im/comment/19t0vu4zqj8u8/",
+   "collapsed": false,
+   "body": "Nice this is badass bro!"
+  },
+  {
+   "id": "19t0wsh65sc5h",
+   "parent_id": "19t0vu4zqj8u8",
+   "author": "lovespeedtest",
+   "score": 1,
+   "created": "2026-11-22T14:56:33.889000+0000",
+   "depth": 1,
+   "permalink": "/r/ReverseEngineering/comments/1y2p3im/comment/19t0wsh65sc5h/",
+   "collapsed": false,
+   "body": "Thanks!"
+  },
+  {
+   "id": "19t0wi52bbjb6",
+   "parent_id": "",
+   "author": "ThisIsPaulDaily",
+   "score": 4,
+   "created": "2026-11-22T14:50:07.652000+0000",
+   "depth": 0,
+   "permalink": "/r/ReverseEngineering/comments/1y2p3im/comment/19t0wi52bbjb6/",
+   "collapsed": false,
+   "body": "What about r/NewPipe and the extractor for it? And the fork Pipepipe?\n\nIs this just a vibe coded version of that?"
+  },
+  {
+   "id": "19t0ws8d1xdvl",
+   "parent_id": "19t0wi52bbjb6",
+   "author": "lovespeedtest",
+   "score": 1,
+   "created": "2026-11-22T14:56:24.745000+0000",
+   "depth": 1,
+   "permalink": "/r/ReverseEngineering/comments/1y2p3im/comment/19t0ws8d1xdvl/",
+   "collapsed": false,
+   "body": "No the ui and it's engine is made by me and uses Sabr (google's protocol)"
+  },
+  {
+   "id": "19t1bj0rauqv4",
+   "parent_id": "",
+   "author": "yournicknamehere",
+   "score": 1,
+   "created": "2026-11-22T20:26:58.701000+0000",
+   "depth": 0,
+   "permalink": "/r/ReverseEngineering/comments/1y2p3im/comment/19t1bj0rauqv4/",
+   "collapsed": false,
+   "body": "that's awesome"
+  }
+ ]
+}
