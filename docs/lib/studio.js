@@ -4,7 +4,7 @@ const $ = (s) => document.querySelector(s);
 const state = {
   videoBlob: null, audioBlob: null, captions: [],
   srcName: 'short', duration: 0, clips: [], tags: new Set(),
-  cfg: null, topics: [],
+  cfg: null, topics: [], queue: [], pipeActive: false, cancel: false,
 };
 const logEl = $('#log');
 const log = (m) => { logEl.textContent += m + '\n'; logEl.scrollTop = logEl.scrollHeight; };
@@ -51,6 +51,11 @@ function wire() {
   $('#autoSplit').onclick = autoSplit;
   $('#renderAll').onclick = renderAll;
   $('#aiPick').onclick = aiPick;
+  $('#pipeRun').onclick = pipelineRun;
+  $('#pipeCancel').onclick = () => { state.cancel = true; log('cancelling...'); };
+  $('#queueSet').onclick = queueSet;
+  $('#queueNext').onclick = queueOpenNext;
+  loadQueue();
   if (localStorage.getItem('shortslab-aiRemember') === '1') {
     $('#aiRemember').checked = true;
     ['aiEndpoint', 'aiModel', 'aiKey'].forEach((id) => {
@@ -79,7 +84,7 @@ async function onBridgeMessage(e) {
   state.audioBlob = d.audioBuf ? new Blob([d.audioBuf], { type: 'audio/webm' }) : null;
   state.srcName = (d.title || 'youtube').replace(/[^\w\- ]+/g, '').slice(0, 60);
   state.captions = parseJson3(d.captions || '');
-  await onSourceReady();
+  await onSourceReady(true);
 }
 
 /* ---------- source files ---------- */
@@ -92,7 +97,7 @@ async function handleFiles(files) {
     else if (f.type.startsWith('audio') || n.includes('audio')) state.audioBlob = f;
     else if (f.type.startsWith('video') || n.endsWith('.webm') || n.endsWith('.mp4')) { state.videoBlob = f; state.srcName = f.name.replace(/\.[^.]+$/, '').replace(/[^\w\- ]+/g, '').slice(0, 60); }
   }
-  if (state.videoBlob) await onSourceReady();
+  if (state.videoBlob) await onSourceReady(true);
 }
 
 async function loadSample() {
@@ -100,10 +105,10 @@ async function loadSample() {
   state.audioBlob = null;
   state.srcName = 'sample';
   state.captions = parseVtt(await (await fetch('assets/sample.vtt')).text());
-  await onSourceReady();
+  await onSourceReady(false);
 }
 
-async function onSourceReady() {
+async function onSourceReady(autoOk) {
   const url = URL.createObjectURL(state.videoBlob);
   const v = $('#preview');
   v.src = url; v.hidden = false;
@@ -113,6 +118,10 @@ async function onSourceReady() {
   renderTranscript();
   $('#clipStep').hidden = false;
   $('#renderStep').hidden = false;
+  if (autoOk && state.queue.some((it) => it.status === 'open') && !state.pipeActive) {
+    if (state.captions.length) pipelineRun();
+    else log('queue: video received, waiting for the captions file too');
+  }
 }
 
 /* ---------- captions ---------- */
@@ -375,8 +384,8 @@ function parseAiClips(text, dur, maxLen) {
 }
 
 async function aiPick() {
-  if (!state.captions.length) { log('no captions yet - load a source with captions first'); return; }
-  if (!$('#aiEndpoint').value.trim()) { log('ERROR: no AI endpoint set - paste your own endpoint and key above to use AI picking'); return; }
+  if (!state.captions.length) { log('no captions yet - load a source with captions first'); return 0; }
+  if (!$('#aiEndpoint').value.trim()) { log('ERROR: no AI endpoint set - paste your own endpoint and key above to use AI picking'); return 0; }
   saveAiSettings();
   const wantN = Math.max(1, Math.min(20, +$('#aiN').value || 5));
   const maxLen = Math.max(10, Math.min(120, +$('#aiMax').value || 60));
@@ -391,24 +400,95 @@ async function aiPick() {
   try {
     let all = [];
     for (let i = 0; i < chunks.length; i++) {
+      if (state.cancel) { log('AI pick cancelled'); return 0; }
       const prompt = 'You pick highlight clips from educational video transcripts for short-form study reels. Reply with ONLY valid JSON, no markdown, no explanation: {"clips":[{"start":<seconds>,"end":<seconds>,"topic":<string>,"title":<string>}]}. Rules: each clip 10-' + maxLen + ' seconds, pick the most instructive self-contained moments, no overlaps, topic must be exactly one of the given topics, title max 6 words.\nTopics: ' + topics + '\nPick up to ' + wantN + ' highlight clips from this transcript section (full video duration ' + Math.round(dur) + 's):\n' + chunks[i].join('\n');
       log('AI: sending captions to ' + $('#aiEndpoint').value.trim() + ' as ' + $('#aiModel').value.trim() + ' (part ' + (i + 1) + '/' + chunks.length + ')...');
       const text = await callLLM(prompt);
       all = all.concat(parseAiClips(text, dur, maxLen));
       if (i < chunks.length - 1) await new Promise((r) => setTimeout(r, 1500));
     }
-    if (!all.length) { log('AI returned no usable clips - try again or use auto-split'); return; }
+    if (!all.length) { log('AI returned no usable clips - try again or use auto-split'); return 0; }
     all.sort((a, b) => a.start - b.start);
     const picked = [];
     for (const c of all) { const last = picked[picked.length - 1]; if (last && c.start < last.end) continue; picked.push(c); }
     state.clips = [];
     for (const c of picked) addClip(c.start, c.end, c.topic, c.title);
     log('AI picked ' + picked.length + ' clips - review below, then Render all');
+    return picked.length;
   } catch (e) {
     log('ERROR: ' + (e && e.message || e));
+    return 0;
   } finally {
     $('#aiPick').disabled = false;
   }
+}
+
+/* ---------- one-click pipeline + queue ---------- */
+async function pipelineRun() {
+  if (state.pipeActive) { log('pipeline already running'); return; }
+  if (!state.videoBlob || !state.captions.length) { log('load a source with captions first'); return; }
+  if (!$('#aiEndpoint').value.trim()) { log('ERROR: no AI endpoint set - paste your own endpoint and key above'); return; }
+  state.pipeActive = true; state.cancel = false;
+  $('#pipeRun').disabled = true; $('#pipeCancel').hidden = false;
+  const openItem = state.queue.find((it) => it.status === 'open');
+  try {
+    log('--- pipeline: AI pick ---');
+    const n = await aiPick();
+    if (state.cancel) { log('pipeline cancelled'); return; }
+    if (!n) { log('pipeline stopped: no clips picked'); return; }
+    log('--- pipeline: rendering ' + n + ' clips ---');
+    await renderAll();
+    if (state.cancel) { log('pipeline cancelled'); return; }
+    if (openItem) {
+      openItem.status = 'done'; saveQueue(); renderQueue();
+      const left = state.queue.filter((i) => i.status !== 'done').length;
+      log('queue: ' + openItem.vid + ' done - ' + left + ' left. Use "Open next video + copy bridge" for the next one.');
+    }
+    log('--- pipeline done: clips filed in the Library ---');
+  } finally {
+    state.pipeActive = false;
+    $('#pipeRun').disabled = false; $('#pipeCancel').hidden = true;
+  }
+}
+
+function saveQueue() { localStorage.setItem('shortslab-queue', JSON.stringify(state.queue)); }
+function loadQueue() {
+  try { state.queue = JSON.parse(localStorage.getItem('shortslab-queue') || '[]'); } catch { state.queue = []; }
+  renderQueue();
+}
+function renderQueue() {
+  const el = $('#queueList'); if (!el) return;
+  el.innerHTML = '';
+  state.queue.forEach((it, i) => {
+    const row = document.createElement('div');
+    row.className = 'cliprow';
+    const t = document.createElement('div');
+    t.className = 'times';
+    t.textContent = (i + 1) + '. ' + it.vid + ' - ' + it.status + (it.status === 'open' ? ' (capture it in the opened tab, drop files here)' : '');
+    row.append(t);
+    el.appendChild(row);
+  });
+}
+function vidFromUrl(u) {
+  const m = u.match(/[?&]v=([\w-]{6,})/) || u.match(/youtu\.be\/([\w-]{6,})/) || u.match(/shorts\/([\w-]{6,})/);
+  return m ? m[1] : null;
+}
+function queueSet() {
+  const vids = $('#queueInput').value.split(/\s+/).map(vidFromUrl).filter(Boolean);
+  if (!vids.length) { log('no YouTube URLs found in the queue box'); return; }
+  state.queue = [...new Set(vids)].map((vid) => ({ vid, status: 'waiting' }));
+  saveQueue(); renderQueue();
+  log('queue set: ' + state.queue.length + ' videos');
+}
+async function queueOpenNext() {
+  const it = state.queue.find((x) => x.status !== 'done');
+  if (!it) { log('queue empty or all done'); return; }
+  it.status = 'open'; saveQueue(); renderQueue();
+  const code = await (await fetch('lib/bridge.js')).text();
+  await navigator.clipboard.writeText(code);
+  $('#bridgeHint').hidden = false;
+  window.open('https://www.youtube.com/watch?v=' + it.vid, '_blank');
+  log('queue: opened ' + it.vid + ' - bridge code copied; run it in that tab, then drop the files here');
 }
 
 async function renderAll() {
@@ -416,6 +496,7 @@ async function renderAll() {
   $('#renderAll').disabled = true;
   try {
     for (let i = 0; i < state.clips.length; i++) {
+      if (state.cancel) { log('rendering cancelled'); break; }
       const c = state.clips[i];
       log(`rendering clip ${i + 1}/${state.clips.length}: ${fmt(c.start)} to ${fmt(c.end)}`);
       $('#bar').style.width = '0%';

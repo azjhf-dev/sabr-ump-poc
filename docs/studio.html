@@ -56,6 +56,21 @@
       <button id="aiPick" class="secondary fit">Pick highlights with AI</button>
     </div>
     <p class="hint">AI clipping sends this video's captions (text only, never the video) to the endpoint you choose. Set your own endpoint and key to enable it; nothing is preconfigured and nothing is saved unless you tick remember.</p>
+    <div class="row" style="margin-top:10px">
+      <button id="pipeRun" class="fit">Auto-clip: AI pick + render + file</button>
+      <button id="pipeCancel" class="secondary fit" hidden>Cancel pipeline</button>
+    </div>
+    <p class="hint">One click: AI picks highlights, renders every clip in this browser, and files each under its topic in the Library. Capturing the video still needs the bridge in a youtube.com tab on your desktop browser.</p>
+    <details style="margin-top:10px">
+      <summary class="hint" style="cursor:pointer">Video queue (optional - feed your ranked lecture list)</summary>
+      <textarea id="queueInput" rows="4" placeholder="One YouTube URL per line" style="width:100%;margin-top:8px"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button id="queueSet" class="secondary fit">Set queue</button>
+        <button id="queueNext" class="secondary fit">Open next video + copy bridge</button>
+      </div>
+      <div id="queueList" class="cliplist" style="margin-top:8px"></div>
+      <p class="hint">Set the queue, open the next video, run the bridge in that tab, drop the files here. The pipeline runs automatically and moves down the list.</p>
+    </details>
     <div class="transcript" id="transcript" style="margin-top:12px"></div>
     <div class="cliplist" id="cliplist" style="margin-top:12px"></div>
     <p class="hint" style="margin-top:10px">Topic applies per clip. Technology tags apply to all clips from this video.</p>
@@ -77,6 +92,6 @@
   </section>
 
 </main>
-<script type="module" src="lib/studio.js?v=24"></script>
+<script type="module" src="lib/studio.js?v=25"></script>
 </body>
 </html>
