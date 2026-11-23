@@ -223,10 +223,12 @@ async function getFFmpeg() {
   ffmpeg.on('progress', ({ progress }) => { $('#bar').style.width = Math.round(progress * 100) + '%'; });
   ffmpeg.on('log', ({ message }) => { if (/error|fail/i.test(message)) log(message); });
   log('loading ffmpeg.wasm core (~30 MB, first time only)...');
+  const workerURL = await FFmpegUtil.toBlobURL('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js', 'text/javascript');
   await ffmpeg.load({
     coreURL: await FFmpegUtil.toBlobURL(`${base}/ffmpeg-core.js`, 'text/javascript'),
     wasmURL: await FFmpegUtil.toBlobURL(`${base}/ffmpeg-core.wasm`, 'application/wasm'),
-    workerURL: await FFmpegUtil.toBlobURL('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js', 'text/javascript'),
+    classWorkerURL: workerURL,
+    workerLoadURL: workerURL,
   });
   log('ffmpeg.wasm ready');
   return ffmpeg;
