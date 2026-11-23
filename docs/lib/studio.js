@@ -226,6 +226,7 @@ async function getFFmpeg() {
   await ffmpeg.load({
     coreURL: await FFmpegUtil.toBlobURL(`${base}/ffmpeg-core.js`, 'text/javascript'),
     wasmURL: await FFmpegUtil.toBlobURL(`${base}/ffmpeg-core.wasm`, 'application/wasm'),
+    workerURL: await FFmpegUtil.toBlobURL('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js', 'text/javascript'),
   });
   log('ffmpeg.wasm ready');
   return ffmpeg;
