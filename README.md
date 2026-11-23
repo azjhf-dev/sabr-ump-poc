@@ -92,3 +92,28 @@ Observed logs from the validated in-page run:
 - Age-restricted and members-only videos are out of scope (no account).
 - If `status=3` (attestation failed) appears three times in a row, re-check
   that `window.yt.config_` carries the home page's fresh `ytcfg`.
+
+## Shorts Lab site (`site/`)
+
+A static Skool-style learning site built on this PoC: paste a YouTube video,
+clip it into captioned vertical shorts in the browser, and file them under
+DataCamp course topics. No server: video bytes come from the bridge below,
+all rendering happens in-page with ffmpeg.wasm, clips live in IndexedDB.
+
+- `site/index.html` - Library. Sidebar of topics (config: `site/topics.json`),
+  grid of playable/downloadable shorts.
+- `site/studio.html` - Studio. Source -> pick clips on the transcript
+  (or auto-split) -> render 9:16 captioned MP4s -> save to the library.
+- `bridge/bridge.mjs` - console-paste bridge derived from `poc-page.mjs`.
+  Run it on a youtube.com watch page: it mints the PO token, pulls the SABR
+  stream plus the caption track, downloads the files and postMessages the
+  buffers to an open studio tab. Build with `npm run build:bridge`.
+- `site/assets/` - a 24 s sample clip + VTT so the render pipeline can be
+  tried with no YouTube fetch at all.
+
+Limits: the bridge needs a normal browser session on youtube.com (datacenter
+IPs get walled), so the capture step is desktop-only; on mobile, drop files
+in instead. ffmpeg.wasm is the single-thread build (static hosts like
+surge.sh cannot send COOP/COEP headers), so a 45 s 720p clip renders in
+roughly 1-3 min on desktop. YouTube ToS is its own thing - this is a
+personal-research project, do not hammer them.

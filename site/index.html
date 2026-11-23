@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shorts Lab - Library</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Shorts<span>Lab</span></div>
+  <nav>
+    <a href="index.html" class="active">Library</a>
+    <a href="studio.html">Studio</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <h3>Topics</h3>
+    <div id="topics"></div>
+  </aside>
+  <main class="main">
+    <div id="techChips" class="chips"></div>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" hidden>
+      <div class="big">🎬</div>
+      <p>No shorts here yet.<br>Open the <a href="studio.html">Studio</a> to clip your first video.</p>
+    </div>
+  </main>
+</div>
+<script type="module" src="lib/library.js"></script>
+</body>
+</html>

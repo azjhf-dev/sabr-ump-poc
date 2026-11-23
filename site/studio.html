@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shorts Lab - Studio</title>
+<link rel="stylesheet" href="app.css">
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Shorts<span>Lab</span></div>
+  <nav>
+    <a href="index.html">Library</a>
+    <a href="studio.html" class="active">Studio</a>
+  </nav>
+</header>
+<main class="main" style="max-width:860px;margin:0 auto;">
+
+  <section class="step">
+    <h2>1. Source</h2>
+    <p class="hint">Pull a YouTube video with the SABR PoC bridge (runs in a youtube.com tab on your own browser, nothing goes to a server), or drop files you already have.</p>
+    <div class="row">
+      <input id="ytUrl" placeholder="YouTube watch URL (https://www.youtube.com/watch?v=...)">
+      <button id="copyBridge" class="secondary fit">Copy bridge code</button>
+      <button id="openYt" class="ghost fit">Open video tab</button>
+    </div>
+    <p class="hint" id="bridgeHint" hidden>Bridge code copied. In the video tab: open DevTools console (F12), paste, press Enter. It downloads video + audio + captions, and sends them here automatically if this tab stays open.</p>
+    <div class="drop" id="drop">
+      Drop files here, or click to pick: <b>video</b> (.webm/.mp4), optional <b>audio</b> (.webm), optional <b>captions</b> (.json3/.vtt/.srt)
+      <input id="filePick" type="file" multiple accept="video/*,audio/*,.json3,.vtt,.srt,.json" hidden>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="loadSample" class="ghost fit">Try with the bundled 24s sample</button>
+      <span id="srcStatus" class="badge fit">no source yet</span>
+    </div>
+    <video id="preview" controls playsinline style="width:100%;max-height:320px;border-radius:12px;background:#000;margin-top:12px" hidden></video>
+  </section>
+
+  <section class="step" id="clipStep" hidden>
+    <h2>2. Pick clips</h2>
+    <p class="hint">Tap a caption line to set the clip start, tap another to set the end. Or auto-split the whole video.</p>
+    <div class="row">
+      <input id="clipLen" type="number" min="5" max="180" value="45" title="Clip length (seconds)">
+      <button id="autoSplit" class="secondary fit">Auto-split into ~Ns clips</button>
+    </div>
+    <div class="transcript" id="transcript" style="margin-top:12px"></div>
+    <div class="cliplist" id="cliplist" style="margin-top:12px"></div>
+    <p class="hint" style="margin-top:10px">Topic applies per clip. Technology tags apply to all clips from this video.</p>
+    <div class="chips" id="tagChips"></div>
+  </section>
+
+  <section class="step" id="renderStep" hidden>
+    <h2>3. Render</h2>
+    <p class="hint">Runs fully in your browser with ffmpeg.wasm (single-thread, works without special headers). A 45s 720p clip takes roughly 1-3 minutes on desktop, more on a phone.</p>
+    <div class="row">
+      <select id="capPos"><option value="bottom">Captions: bottom</option><option value="center">Captions: center</option><option value="top">Captions: top</option></select>
+      <input id="capSize" type="number" min="24" max="120" value="56" title="Caption font size (px)">
+      <label class="fit" style="display:flex;gap:8px;align-items:center;white-space:nowrap"><input type="checkbox" id="remuxOnly" style="width:auto"> remux only (fast, no captions)</label>
+      <button id="renderAll" class="fit">Render all clips</button>
+    </div>
+    <div class="progress" style="margin:14px 0 8px"><div id="bar"></div></div>
+    <div class="log" id="log"></div>
+    <div id="outputs" class="cliplist" style="margin-top:12px"></div>
+  </section>
+
+</main>
+<script type="module" src="lib/studio.js"></script>
+</body>
+</html>
