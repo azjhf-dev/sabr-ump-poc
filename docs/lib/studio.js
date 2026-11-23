@@ -292,7 +292,7 @@ async function renderClip(clip, idx) {
   }
   let chain = '[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30';
   let prev = 'bg';
-  chain += `[${prev}]`;
+  chain += `[${prev}];`;
   pngs.forEach((p, i) => {
     const out = 'v' + i;
     chain += `[${prev}][${(state.audioBlob ? 2 : 1) + i}:v]overlay=0:0:enable='between(t,${p.s.toFixed(2)},${p.e.toFixed(2)})'[${out}];`;
