@@ -218,6 +218,7 @@ function renderClips() {
 let ffmpeg = null;
 async function getFFmpeg() {
   if (ffmpeg) return ffmpeg;
+  let failed = true;
   const base = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd';
   ffmpeg = new FFmpegWASM.FFmpeg();
   ffmpeg.on('progress', ({ progress }) => { $('#bar').style.width = Math.round(progress * 100) + '%'; });
@@ -230,8 +231,9 @@ async function getFFmpeg() {
     classWorkerURL: workerURL,
     workerLoadURL: workerURL,
   });
+  failed = false;
   log('ffmpeg.wasm ready');
-  return ffmpeg;
+  if (!failed) return ffmpeg;
 }
 
 function captionPng(text, pos, size) {
