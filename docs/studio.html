@@ -45,18 +45,17 @@
       <button id="autoSplit" class="secondary fit">Auto-split into ~Ns clips</button>
     </div>
     <div class="row" style="margin-top:10px">
-      <select id="aiEndpoint" title="AI endpoint">
-        <option value="https://qwen-slack-bot.onrender.com/chat">Nous Qwen Max backend (free, no key)</option>
-        <option value="https://api.groq.com/openai/v1/chat/completions">Groq direct (needs your API key)</option>
-      </select>
-      <input id="aiModel" value="qwen/qwen4-max:free" title="Model id">
-      <input id="aiKey" type="password" placeholder="API key, stays in this browser" autocomplete="off" title="API key (stored only in localStorage)">
+      <input id="aiEndpoint" placeholder="Your AI endpoint (empty = AI off)" autocomplete="off" title="e.g. your own OpenAI-compatible chat completions URL">
+      <input id="aiModel" placeholder="Model id (e.g. qwen/qwen3.8-27b)" autocomplete="off">
+      <input id="aiKey" type="password" placeholder="API key, session only" autocomplete="off">
     </div>
     <div class="row">
       <input id="aiN" type="number" min="1" max="20" value="5" title="How many highlight clips">
       <input id="aiMax" type="number" min="10" max="120" value="60" title="Max clip length (seconds)">
+      <label class="fit" style="display:flex;gap:8px;align-items:center;white-space:nowrap" title="Off = settings live only until you close the tab"><input type="checkbox" id="aiRemember" style="width:auto"> remember on this device</label>
       <button id="aiPick" class="secondary fit">Pick highlights with AI</button>
     </div>
+    <p class="hint">AI clipping sends this video's captions (text only, never the video) to the endpoint you choose. Set your own endpoint and key to enable it; nothing is preconfigured and nothing is saved unless you tick remember.</p>
     <div class="transcript" id="transcript" style="margin-top:12px"></div>
     <div class="cliplist" id="cliplist" style="margin-top:12px"></div>
     <p class="hint" style="margin-top:10px">Topic applies per clip. Technology tags apply to all clips from this video.</p>
@@ -78,6 +77,6 @@
   </section>
 
 </main>
-<script type="module" src="lib/studio.js?v=22"></script>
+<script type="module" src="lib/studio.js?v=24"></script>
 </body>
 </html>
