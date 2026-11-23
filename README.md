@@ -110,6 +110,12 @@ all rendering happens in-page with ffmpeg.wasm, clips live in IndexedDB.
   buffers to an open studio tab. Build with `npm run build:bridge`.
 - `docs/assets/` - a 24 s sample clip + VTT so the render pipeline can be
   tried with no YouTube fetch at all.
+- AI highlight picking is built in but OFF by default: the owner pastes their
+  own OpenAI-compatible endpoint + model + key in the studio (session-only
+  unless they tick "remember on this device"). Only the transcript text is
+  sent to that endpoint. If the endpoint fails, the site fails closed - no
+  silent fallback. Manual tap-to-clip and auto-split always work without AI.
+  No endpoint or key is committed to this repo.
 
 Limits: the bridge needs a normal browser session on youtube.com (datacenter
 IPs get walled), so the capture step is desktop-only; on mobile, drop files
