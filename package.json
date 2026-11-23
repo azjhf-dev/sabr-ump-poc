@@ -1,0 +1,20 @@
+{
+  "name": "sabr-ump-poc",
+  "version": "1.0.0",
+  "description": "PoC of YouTube SABR/UMP streaming with BotGuard PO-token binding (r/ReverseEngineering 1y2p3im)",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "poc:node": "node poc.mjs",
+    "poc:bundle": "esbuild poc-page.mjs --bundle --minify --format=iife --platform=browser --target=es2022 --outfile=poc-bundle.js"
+  },
+  "dependencies": {
+    "bgutils-js": "^4.0.3",
+    "googlevideo": "^3.0.0",
+    "jsdom": "^25.0.1",
+    "youtubei.js": "^18.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
