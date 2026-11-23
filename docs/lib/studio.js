@@ -228,7 +228,7 @@ async function getFFmpeg() {
   ffmpeg.on('progress', ({ progress }) => { $('#bar').style.width = Math.round(progress * 100) + '%'; });
   ffmpeg.on('log', ({ message }) => { if (/error|fail/i.test(message)) log(message); });
   log('loading ffmpeg.wasm core (~30 MB, first time only)...');
-  await ffmpeg.load({ coreURL: 'vendor/ffmpeg-core.js', wasmURL: 'vendor/ffmpeg-core.wasm' });
+  await ffmpeg.load({ coreURL: new URL('vendor/ffmpeg-core.js', location.href).href, wasmURL: new URL('vendor/ffmpeg-core.wasm', location.href).href });
   failed = false;
   log('ffmpeg.wasm ready');
   if (!failed) return ffmpeg;
