@@ -7,7 +7,7 @@
   "scripts": {
     "poc:node": "node poc.mjs",
     "poc:bundle": "esbuild poc-page.mjs --bundle --minify --format=iife --platform=browser --target=es2022 --outfile=poc-bundle.js",
-    "build:bridge": "esbuild bridge/bridge.mjs --bundle --minify --format=iife --platform=browser --target=es2022 --outfile=site/lib/bridge.js"
+    "build:bridge": "esbuild bridge/bridge.mjs --bundle --minify --format=iife --platform=browser --target=es2022 --outfile=docs/lib/bridge.js"
   },
   "dependencies": {
     "bgutils-js": "^4.0.3",

@@ -93,22 +93,22 @@ Observed logs from the validated in-page run:
 - If `status=3` (attestation failed) appears three times in a row, re-check
   that `window.yt.config_` carries the home page's fresh `ytcfg`.
 
-## Shorts Lab site (`site/`)
+## Shorts Lab site (`docs/`)
 
 A static Skool-style learning site built on this PoC: paste a YouTube video,
 clip it into captioned vertical shorts in the browser, and file them under
 DataCamp course topics. No server: video bytes come from the bridge below,
 all rendering happens in-page with ffmpeg.wasm, clips live in IndexedDB.
 
-- `site/index.html` - Library. Sidebar of topics (config: `site/topics.json`),
+- `docs/index.html` - Library. Sidebar of topics (config: `docs/topics.json`),
   grid of playable/downloadable shorts.
-- `site/studio.html` - Studio. Source -> pick clips on the transcript
+- `docs/studio.html` - Studio. Source -> pick clips on the transcript
   (or auto-split) -> render 9:16 captioned MP4s -> save to the library.
 - `bridge/bridge.mjs` - console-paste bridge derived from `poc-page.mjs`.
   Run it on a youtube.com watch page: it mints the PO token, pulls the SABR
   stream plus the caption track, downloads the files and postMessages the
   buffers to an open studio tab. Build with `npm run build:bridge`.
-- `site/assets/` - a 24 s sample clip + VTT so the render pipeline can be
+- `docs/assets/` - a 24 s sample clip + VTT so the render pipeline can be
   tried with no YouTube fetch at all.
 
 Limits: the bridge needs a normal browser session on youtube.com (datacenter
