@@ -376,6 +376,7 @@ function parseAiClips(text, dur, maxLen) {
 
 async function aiPick() {
   if (!state.captions.length) { log('no captions yet - load a source with captions first'); return; }
+  if (!$('#aiEndpoint').value.trim()) { log('ERROR: no AI endpoint set - paste your own endpoint and key above to use AI picking'); return; }
   saveAiSettings();
   const wantN = Math.max(1, Math.min(20, +$('#aiN').value || 5));
   const maxLen = Math.max(10, Math.min(120, +$('#aiMax').value || 60));
