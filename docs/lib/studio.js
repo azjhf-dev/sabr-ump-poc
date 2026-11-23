@@ -50,6 +50,19 @@ function wire() {
   $('#loadSample').onclick = loadSample;
   $('#autoSplit').onclick = autoSplit;
   $('#renderAll').onclick = renderAll;
+  $('#aiPick').onclick = aiPick;
+  $('#aiEndpoint').onchange = () => {
+    const nous = $('#aiEndpoint').value.includes('/chat');
+    $('#aiModel').value = nous ? 'qwen/qwen4-max:free' : 'qwen/qwen3.8-27b';
+  };
+  ['aiEndpoint', 'aiModel', 'aiKey', 'aiN', 'aiMax'].forEach((id) => {
+    const v = localStorage.getItem('shortslab-' + id);
+    if (v !== null) $('#' + id).value = v;
+  });
+}
+
+function saveAiSettings() {
+  ['aiEndpoint', 'aiModel', 'aiKey', 'aiN', 'aiMax'].forEach((id) => localStorage.setItem('shortslab-' + id, $('#' + id).value));
 }
 
 /* ---------- bridge postMessage ---------- */
@@ -162,8 +175,8 @@ function renderTranscript() {
   });
 }
 
-function addClip(start, end) {
-  state.clips.push({ id: Date.now() + Math.random(), start, end, topic: state.topics[0] });
+function addClip(start, end, topic, title) {
+  state.clips.push({ id: Date.now() + Math.random(), start, end, topic: topic || state.topics[0], title: title || '' });
   renderClips();
 }
 
@@ -198,6 +211,7 @@ function renderClips() {
     const times = document.createElement('div');
     times.className = 'times';
     times.innerHTML = `<b>#${idx + 1}</b> `;
+    if (c.title) { const ts = document.createElement('span'); ts.style.color = 'var(--accent)'; ts.textContent = c.title + ' | '; times.appendChild(ts); }
     const si = document.createElement('input'); si.type = 'number'; si.step = '0.1'; si.value = c.start.toFixed(1); si.style.cssText = 'width:76px;padding:4px 6px';
     const ei = document.createElement('input'); ei.type = 'number'; ei.step = '0.1'; ei.value = c.end.toFixed(1); ei.style.cssText = 'width:76px;padding:4px 6px';
     si.onchange = () => { c.start = +si.value; };
@@ -310,6 +324,87 @@ async function renderClip(clip, idx) {
   return new Blob([await ff.readFile('out' + idx + '.mp4')], { type: 'video/mp4' });
 }
 
+/* ---------- AI highlight picking ---------- */
+async function callLLM(prompt) {
+  const ep = $('#aiEndpoint').value.trim();
+  const model = $('#aiModel').value.trim();
+  const key = $('#aiKey').value.trim();
+  const isNous = ep.includes('/chat') && !ep.includes('/v1/');
+  const headers = { 'Content-Type': 'application/json' };
+  if (key) headers['Authorization'] = 'Bearer ' + key;
+  const body = isNous ? { message: prompt } : { model, messages: [{ role: 'user', content: prompt }] };
+  let lastErr = 'unknown';
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const r = await fetch(ep, { method: 'POST', headers, body: JSON.stringify(body) });
+      if (r.status === 429 || r.status >= 500) { lastErr = 'HTTP ' + r.status + ' (rate limit or server)'; await new Promise((res) => setTimeout(res, 3000 * (attempt + 1))); continue; }
+      if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + (await r.text()).slice(0, 200));
+      const j = await r.json();
+      return isNous ? (j.reply || '') : ((j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '');
+    } catch (e) {
+      lastErr = e && e.message || String(e);
+      await new Promise((res) => setTimeout(res, 3000 * (attempt + 1)));
+    }
+  }
+  throw new Error('AI call failed after retries: ' + lastErr);
+}
+
+function parseAiClips(text, dur, maxLen) {
+  const t = text.trim().replace(/```json|```/g, '');
+  const s0 = t.indexOf('{'), e0 = t.lastIndexOf('}');
+  if (s0 < 0 || e0 < 0) return [];
+  let arr;
+  try { const j = JSON.parse(t.slice(s0, e0 + 1)); arr = Array.isArray(j) ? j : (j.clips || []); }
+  catch (err) { log('AI JSON parse failed: ' + err.message); return []; }
+  return arr.map((c) => {
+    let start = Math.max(0, Math.min(+c.start || 0, dur - 2));
+    let end = Math.max(start + 5, Math.min(+c.end || start + 30, dur));
+    if (end - start > maxLen + 15) end = start + maxLen;
+    const sc = state.captions.find((x) => x.end > start && x.start <= start + 1.5);
+    if (sc) start = sc.start;
+    const ec = [...state.captions].reverse().find((x) => x.start < end && x.end >= end - 1.5);
+    if (ec) end = Math.min(ec.end, dur);
+    const topic = state.topics.includes(c.topic) ? c.topic : state.topics[0];
+    return { start, end, topic, title: String(c.title || '').slice(0, 60) };
+  }).filter((c) => c.end - c.start >= 5);
+}
+
+async function aiPick() {
+  if (!state.captions.length) { log('no captions yet - load a source with captions first'); return; }
+  saveAiSettings();
+  const wantN = Math.max(1, Math.min(20, +$('#aiN').value || 5));
+  const maxLen = Math.max(10, Math.min(120, +$('#aiMax').value || 60));
+  const topics = state.topics.join('; ');
+  const dur = state.duration;
+  const lines = state.captions.map((c) => `[${fmt(c.start)}] ${c.text}`);
+  const chunks = [];
+  let cur = [], len = 0;
+  for (const l of lines) { if (len + l.length > 8000 && cur.length) { chunks.push(cur); cur = []; len = 0; } cur.push(l); len += l.length + 1; }
+  if (cur.length) chunks.push(cur);
+  $('#aiPick').disabled = true;
+  try {
+    let all = [];
+    for (let i = 0; i < chunks.length; i++) {
+      const prompt = 'You pick highlight clips from educational video transcripts for short-form study reels. Reply with ONLY valid JSON, no markdown, no explanation: {"clips":[{"start":<seconds>,"end":<seconds>,"topic":<string>,"title":<string>}]}. Rules: each clip 10-' + maxLen + ' seconds, pick the most instructive self-contained moments, no overlaps, topic must be exactly one of the given topics, title max 6 words.\nTopics: ' + topics + '\nPick up to ' + wantN + ' highlight clips from this transcript section (full video duration ' + Math.round(dur) + 's):\n' + chunks[i].join('\n');
+      log('AI: asking ' + $('#aiModel').value.trim() + ' (part ' + (i + 1) + '/' + chunks.length + ')... first call can take ~1 min while the free backend wakes');
+      const text = await callLLM(prompt);
+      all = all.concat(parseAiClips(text, dur, maxLen));
+      if (i < chunks.length - 1) await new Promise((r) => setTimeout(r, 1500));
+    }
+    if (!all.length) { log('AI returned no usable clips - try again or use auto-split'); return; }
+    all.sort((a, b) => a.start - b.start);
+    const picked = [];
+    for (const c of all) { const last = picked[picked.length - 1]; if (last && c.start < last.end) continue; picked.push(c); }
+    state.clips = [];
+    for (const c of picked) addClip(c.start, c.end, c.topic, c.title);
+    log('AI picked ' + picked.length + ' clips - review below, then Render all');
+  } catch (e) {
+    log('ERROR: ' + (e && e.message || e));
+  } finally {
+    $('#aiPick').disabled = false;
+  }
+}
+
 async function renderAll() {
   if (!state.clips.length) { log('no clips yet'); return; }
   $('#renderAll').disabled = true;
@@ -319,7 +414,7 @@ async function renderAll() {
       log(`rendering clip ${i + 1}/${state.clips.length}: ${fmt(c.start)} to ${fmt(c.end)}`);
       $('#bar').style.width = '0%';
       const blob = await renderClip(c, i);
-      const title = `${state.srcName} #${i + 1}`;
+      const title = c.title ? `${state.srcName} - ${c.title}` : `${state.srcName} #${i + 1}`;
       await putClip({ id: c.id, title, topic: c.topic, tags: [...state.tags], durationSec: c.end - c.start, created: Date.now(), blob });
       const out = document.createElement('div');
       out.className = 'cliprow';
