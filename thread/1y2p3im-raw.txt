@@ -1,0 +1,15 @@
+# github-Reversing YouTube's SABR: UMP container, PO-token binding, and playing it on-device through a hidden youtube.com page
+u/lovespeedtest (+37) - r/ReverseEngineering
+
+[19t0vu4zqj8u8] u/Pitiful_Conflict7031 (+6)
+  Nice this is badass bro!
+  [19t0wsh65sc5h] u/lovespeedtest (+1)
+    Thanks!
+[19t0wi52bbjb6] u/ThisIsPaulDaily (+4)
+  What about r/NewPipe and the extractor for it? And the fork Pipepipe?
+  
+  Is this just a vibe coded version of that?
+  [19t0ws8d1xdvl] u/lovespeedtest (+1)
+    No the ui and it's engine is made by me and uses Sabr (google's protocol)
+[19t1bj0rauqv4] u/yournicknamehere (+1)
+  that's awesome
