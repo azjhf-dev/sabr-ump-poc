@@ -226,7 +226,7 @@ async function getFFmpeg() {
   let failed = true;
   ffmpeg = new FFmpegWASM.FFmpeg();
   ffmpeg.on('progress', ({ progress }) => { $('#bar').style.width = Math.round(progress * 100) + '%'; });
-  ffmpeg.on('log', ({ message }) => { if (/error|fail/i.test(message)) log(message); });
+  window.__fflog = []; ffmpeg.on('log', ({ message }) => { window.__fflog.push(message); if (/error|fail/i.test(message)) log(message); });
   log('loading ffmpeg.wasm core (~30 MB, first time only)...');
   await ffmpeg.load({ coreURL: new URL('vendor/ffmpeg-core.js', location.href).href, wasmURL: new URL('vendor/ffmpeg-core.wasm', location.href).href });
   failed = false;
@@ -304,6 +304,7 @@ async function renderClip(clip, idx) {
   if (state.audioBlob) args.push('-map', '1:a');
   else args.push('-map', '0:a?');
   args.push('-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', 'out' + idx + '.mp4');
+  log('ffmpeg args: ' + args.join(' '));
   await ff.exec(args);
   return new Blob([await ff.readFile('out' + idx + '.mp4')], { type: 'video/mp4' });
 }
@@ -336,6 +337,7 @@ async function renderAll() {
     }
   } catch (e) {
     log('ERROR: ' + (e && e.message || e));
+    if (window.__fflog) log('--- ffmpeg tail ---\n' + window.__fflog.slice(-25).join('\n'));
   } finally {
     $('#renderAll').disabled = false;
   }
