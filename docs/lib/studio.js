@@ -266,6 +266,7 @@ function captionPng(text, pos, size) {
 
 async function renderClip(clip, idx) {
   const ff = await getFFmpeg();
+  window.__ff = ff;
   const remux = $('#remuxOnly').checked;
   const cues = state.captions.filter(c => c.end > clip.start && c.start < clip.end);
   await ff.writeFile('in' + idx + (state.videoBlob.type.includes('mp4') ? '.mp4' : '.webm'), await fetchFileLocal(state.videoBlob));
