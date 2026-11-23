@@ -54,6 +54,7 @@ function wire() {
   $('#pipeRun').onclick = pipelineRun;
   $('#pipeCancel').onclick = () => { state.cancel = true; log('cancelling...'); };
   $('#queueSet').onclick = queueSet;
+  $('#queueSuggest').onclick = queueSuggest;
   $('#queueNext').onclick = queueOpenNext;
   loadQueue();
   if (localStorage.getItem('shortslab-aiRemember') === '1') {
@@ -479,6 +480,18 @@ function queueSet() {
   state.queue = [...new Set(vids)].map((vid) => ({ vid, status: 'waiting' }));
   saveQueue(); renderQueue();
   log('queue set: ' + state.queue.length + ' videos');
+}
+async function queueSuggest() {
+  try {
+    const j = await (await fetch('suggested.json')).json();
+    const lines = [];
+    for (const [topic, vids] of Object.entries(j.topics || {})) {
+      lines.push('# ' + topic);
+      for (const v of vids) lines.push('https://www.youtube.com/watch?v=' + v.vid + '  # ' + v.title);
+    }
+    $('#queueInput').value = lines.join('\n');
+    log('ranked lecture list loaded - review, trim, then Set queue');
+  } catch (e) { log('could not load suggested.json: ' + (e && e.message || e)); }
 }
 async function queueOpenNext() {
   const it = state.queue.find((x) => x.status !== 'done');

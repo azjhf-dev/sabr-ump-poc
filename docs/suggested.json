@@ -1,0 +1,29 @@
+{
+  "note": "Ranked lecture list for the queue (Andrew Ng rubric, see repo README)",
+  "topics": {
+    "Supervised Learning with scikit-learn": [
+      { "vid": "4b4MUYve_U8", "title": "CS229 L2 - Linear Regression and Gradient Descent (Andrew Ng)" },
+      { "vid": "het9HFqo1TQ", "title": "CS229 L3 - Locally Weighted & Logistic Regression" },
+      { "vid": "rjbkWSTjHzM", "title": "CS229 L8 - Data Splits, Models & Cross-Validation" },
+      { "vid": "wr9gUr-eWdA", "title": "CS229 - Decision Trees and Ensemble Methods" },
+      { "vid": "mbyG85GZ0PI", "title": "Caltech Learning From Data L1 - The Learning Problem" },
+      { "vid": "lDwow4aOrtg", "title": "CS229 L6 - Support Vector Machines" },
+      { "vid": "8NYoQiRANpg", "title": "CS229 L7 - Kernels" },
+      { "vid": "BbYV8UfMJSA", "title": "Cornell CS4780 L4 - Curse of Dimensionality / Perceptron" },
+      { "vid": "zj-5nkNKAow", "title": "Cornell CS4780 L2 - Supervised Learning Setup" },
+      { "vid": "hDKCxebp88A", "title": "Machine Learning with Python and Scikit-Learn - Full Course" }
+    ],
+    "Introduction to Deep Learning with PyTorch": [
+      { "vid": "VMj-3S1tku0", "title": "Karpathy - building micrograd (backprop from scratch)" },
+      { "vid": "PaCmpygFfXo", "title": "Karpathy - building makemore (torch.Tensor + training loop)" },
+      { "vid": "MfIjxPh6Pys", "title": "CS229 - Introduction to Neural Networks" },
+      { "vid": "zUazLXZZA2U", "title": "CS229 - Backprop & Improving Neural Networks" },
+      { "vid": "ErnWZxJovaM", "title": "MIT 6.S191 2024 - Introduction to Deep Learning" },
+      { "vid": "aircAruvnKk", "title": "3Blue1Brown - But what is a Neural Network?" },
+      { "vid": "IHZwWFHWa-w", "title": "3Blue1Brown - Gradient descent" },
+      { "vid": "Ilg3gGewQ5U", "title": "3Blue1Brown - What is backpropagation really doing?" },
+      { "vid": "0bMe_vCZo30", "title": "NYU Deep Learning - Week 1 Lecture (LeCun/Canziani)" },
+      { "vid": "V_xro1bcAuA", "title": "PyTorch for Deep Learning & Machine Learning - Full Course" }
+    ]
+  }
+}
