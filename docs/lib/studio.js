@@ -304,7 +304,7 @@ async function renderClip(clip, idx) {
   args.push('-filter_complex', chain + `;[${prev}]format=yuv420p[${vout}]`, '-map', `[${vout}]`);
   if (state.audioBlob) args.push('-map', '1:a');
   else args.push('-map', '0:a?');
-  args.push('-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', 'out' + idx + '.mp4');
+  args.push('-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-shortest', 'out' + idx + '.mp4');
   log('ffmpeg args: ' + args.join(' '));
   await ff.exec(args);
   return new Blob([await ff.readFile('out' + idx + '.mp4')], { type: 'video/mp4' });
