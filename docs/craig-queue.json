@@ -1,0 +1,333 @@
+{
+ "topic": "Craig Dennis",
+ "note": "Full-video drip queue. Ratings are provisional (title, length, format), not watched end to end. Items show on or after their release date (Asia/Singapore).",
+ "items": [
+  {
+   "vid": "1u0hTd86_HU",
+   "title": "Experiment with SVG & 3D Design with the Codex Plugin",
+   "source": "OpenAI",
+   "group": "Now: OpenAI",
+   "stars": 4,
+   "why": "Short, concrete demo of the latest Codex plugin; shows prompt to output.",
+   "release": "2026-11-25"
+  },
+  {
+   "vid": "E5K0dAi6J2g",
+   "title": "I Turned a Pinball Manual Into a 3D Website",
+   "source": "Craig Dennis (own channel)",
+   "group": "Now: OpenAI",
+   "stars": 4,
+   "why": "78s, one idea, visible result.",
+   "release": "2026-11-25"
+  },
+  {
+   "vid": "dU1YgaNEZmQ",
+   "title": "I Built an AI Yearbook for My Coworkers with ChatGPT Sites",
+   "source": "Craig Dennis (own channel)",
+   "group": "Now: OpenAI",
+   "stars": 3,
+   "why": "44s teaser; light on method.",
+   "release": "2026-11-25"
+  },
+  {
+   "vid": "IViRdGvNUzs",
+   "title": "I Built a Time-Traveling Yearbook with ChatGPT Sites",
+   "source": "Craig Dennis (own channel)",
+   "group": "Now: OpenAI",
+   "stars": 4,
+   "why": "Full build walkthrough, about 10 min.",
+   "release": "2026-11-26"
+  },
+  {
+   "vid": "VPjoILFEJHE",
+   "title": "I built a cookie clicker with ChatGPT Sites (and let AI click it)",
+   "source": "Craig Dennis (own channel)",
+   "group": "Now: OpenAI",
+   "stars": 4,
+   "why": "Build plus agent-in-the-loop idea.",
+   "release": "2026-11-27"
+  },
+  {
+   "vid": "UpidgWBWuyU",
+   "title": "I made Codex click a cookie",
+   "source": "Craig Dennis (own channel)",
+   "group": "Now: OpenAI",
+   "stars": 3,
+   "why": "43s clip of the cookie clicker experiment.",
+   "release": "2026-11-28"
+  },
+  {
+   "vid": "GZvSYJDk-us",
+   "title": "APIs for Beginners - How to use an API (Full Course)",
+   "source": "freeCodeCamp",
+   "group": "Foundations",
+   "stars": 5,
+   "why": "Gold standard beginner course: concepts then hands-on. Start here.",
+   "release": "2026-11-29",
+   "verify": "Presenter match to Craig not yet confirmed from page text; there is a second similar upload (WXsD0ZgxjRw)."
+  },
+  {
+   "vid": "7uhBVnI_qSw",
+   "title": "Learn Python Basics - Complete Course for Beginners with Craig Dennis",
+   "source": "Treehouse",
+   "group": "Foundations",
+   "stars": 4,
+   "why": "Long, patient beginner course.",
+   "release": "2026-11-30"
+  },
+  {
+   "vid": "53sp0bdU-aU",
+   "title": "Learn NumPy - Complete Course for Beginners with Craig Dennis",
+   "source": "Treehouse",
+   "group": "Foundations",
+   "stars": 4,
+   "why": "Ties directly to your scikit-learn and PyTorch topics.",
+   "release": "2026-12-01"
+  },
+  {
+   "vid": "f2y3ztJIl08",
+   "title": "21 Questions with Treehouse Teacher, Craig Dennis",
+   "source": "Treehouse",
+   "group": "Foundations",
+   "stars": 3,
+   "why": "Short personal intro to how he teaches.",
+   "release": "2026-12-01"
+  },
+  {
+   "vid": "DvS1mM5TGnM",
+   "title": "Alexa, Give a Talk on How to Write a Skill",
+   "source": "PDX Node",
+   "group": "Foundations",
+   "stars": 3,
+   "why": "Conference talk, older voice-skill material.",
+   "release": "2026-12-02"
+  },
+  {
+   "vid": "4jUMqutYmyE",
+   "title": "Learn Twilio Messaging, Voice, and Serverless (Full Course)",
+   "source": "TwilioDevs",
+   "group": "Twilio era",
+   "stars": 4,
+   "why": "Long hands-on build course.",
+   "release": "2026-12-03",
+   "verify": "Presenter match to Craig not yet confirmed from page text."
+  },
+  {
+   "vid": "ciHX0CniPCY",
+   "title": "BubbleSort: Developer Game Show ft. Craig, Liz, and Lizzie",
+   "source": "TwilioDevs",
+   "group": "Twilio era",
+   "stars": 3,
+   "why": "Fun format, light learning value.",
+   "release": "2026-12-04"
+  },
+  {
+   "vid": "tfWCkPE_Nns",
+   "title": "Level Up Next with Craig & Kaelyn - Voice Intelligence",
+   "source": "Twilio",
+   "group": "Twilio era",
+   "stars": 3,
+   "why": "Conversational overview of voice intelligence.",
+   "release": "2026-12-05"
+  },
+  {
+   "vid": "z8iLhlyt6VM",
+   "title": "Level Up Next: A first look with Craig and Sam",
+   "source": "Twilio",
+   "group": "Twilio era",
+   "stars": 3,
+   "why": "Product walkthrough, long.",
+   "release": "2026-12-06"
+  },
+  {
+   "vid": "ZDpyPnZaAjs",
+   "title": "How to Build a Voice AI Agent (GPT Live 1 + Twilio)",
+   "source": "TwilioDevs",
+   "group": "Twilio era",
+   "stars": 4,
+   "why": "Short and practical, 9 min.",
+   "release": "2026-12-07"
+  },
+  {
+   "vid": "GNK2htbMco4",
+   "title": "dev.to Cloudflare AI Challenge | Workers AI app",
+   "source": "Craig Dennis (own channel)",
+   "group": "Cloudflare era",
+   "stars": 3,
+   "why": "5 min build demo.",
+   "release": "2026-12-08"
+  },
+  {
+   "vid": "oGxEEubH_Kc",
+   "title": "Exploring Llama Guard on Workers AI",
+   "source": "Craig Dennis (own channel)",
+   "group": "Cloudflare era",
+   "stars": 4,
+   "why": "Safety classifier in practice, 12 min.",
+   "release": "2026-12-09"
+  },
+  {
+   "vid": "dbDO492wb-E",
+   "title": "Learn more about building with Cloudflare, with Craig Dennis",
+   "source": "Cloudflare",
+   "group": "Cloudflare era",
+   "stars": 3,
+   "why": "6 min orientation.",
+   "release": "2026-12-10"
+  },
+  {
+   "vid": "YFWkYzjT7x0",
+   "title": "Talk To The Hand: Deploy a Conversational Voice AI Agent (AI Avenue Tutorials Ep 1)",
+   "source": "Cloudflare Developers",
+   "group": "Cloudflare era",
+   "stars": 5,
+   "why": "Clear, scoped tutorial with a working agent at the end.",
+   "release": "2026-12-11"
+  },
+  {
+   "vid": "FqAdyNPpcEQ",
+   "title": "Build a conversational form with Deepgram | WorkerShop",
+   "source": "Cloudflare Developers",
+   "group": "Cloudflare era",
+   "stars": 4,
+   "why": "Hour-long workshop, hands-on.",
+   "release": "2026-12-11",
+   "verify": "Presenter match to Craig not yet confirmed."
+  },
+  {
+   "vid": "TLQT1JI3CGA",
+   "title": "AI Avenue Trailer",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 2,
+   "why": "46s trailer.",
+   "release": "2026-12-12"
+  },
+  {
+   "vid": "j15hF2s5UxI",
+   "title": "AI Voice: I Tried to Make My Robot Hand Talk | AI Avenue Ep 1",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 4,
+   "why": "Docu-series, concept plus story.",
+   "release": "2026-12-13"
+  },
+  {
+   "vid": "xp4Z_ZqP4Ck",
+   "title": "Computer Vision: AI Can See Clearly Now | AI Avenue Ep 2",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 4,
+   "why": "Good intuition for vision models.",
+   "release": "2026-12-14"
+  },
+  {
+   "vid": "0GcVU3R5_qE",
+   "title": "Is AI REALLY thinking?! | AI Avenue Ep 3",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 4,
+   "why": "Conceptual, useful framing.",
+   "release": "2026-12-15"
+  },
+  {
+   "vid": "XfFtUmEta7s",
+   "title": "AI Learning: It's copying everything we do!!! | AI Avenue Ep 4",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 4,
+   "why": "How models learn, accessible.",
+   "release": "2026-12-16"
+  },
+  {
+   "vid": "_ZtgIRFgPdU",
+   "title": "Robots are finally here... | AI Avenue Ep 5",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 3,
+   "why": "More cultural than technical.",
+   "release": "2026-12-17"
+  },
+  {
+   "vid": "6_UFKqVR9xw",
+   "title": "AI: What's the future smell like? | AI Avenue Ep 6",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 3,
+   "why": "Closing episode, more reflective.",
+   "release": "2026-12-18"
+  },
+  {
+   "vid": "bqzmrye1e1w",
+   "title": "Cloudflare Connect Las Vegas Preview & What Is AI Avenue",
+   "source": "Cloudflare",
+   "group": "AI Avenue",
+   "stars": 3,
+   "why": "Long preview stream.",
+   "release": "2026-12-19"
+  },
+  {
+   "vid": "a4YlBBM81ZA",
+   "title": "Craig Dennis, Developer Educator, Cloudflare @ AI Voice Agents",
+   "source": "JumpStars",
+   "group": "Talks and interviews",
+   "stars": 3,
+   "why": "12 min talk.",
+   "release": "2026-12-20"
+  },
+  {
+   "vid": "h_KxwehtpD0",
+   "title": "How to think systematically to build amazing AI experiences",
+   "source": "Jam",
+   "group": "Talks and interviews",
+   "stars": 4,
+   "why": "Mental model for building AI products, 12 min.",
+   "release": "2026-12-20"
+  },
+  {
+   "vid": "lE3xRSy8kng",
+   "title": "AI as a Power Up, Not Autopilot: Craig Dennis on Boosting Productivity and Software Education",
+   "source": "Overcommitted",
+   "group": "Talks and interviews",
+   "stars": 4,
+   "why": "Best single view of his teaching philosophy.",
+   "release": "2026-12-21"
+  },
+  {
+   "vid": "-K2ibaKCKrM",
+   "title": "Developer Education and Training with Craig Dennis from Twilio",
+   "source": "Software Huddle",
+   "group": "Talks and interviews",
+   "stars": 3,
+   "why": "Interview on developer education.",
+   "release": "2026-12-22"
+  },
+  {
+   "vid": "H8qBrq6UtBM",
+   "title": "Ep 2 Winging It! with Craig Dennis",
+   "source": "ShreyTheCray",
+   "group": "Talks and interviews",
+   "stars": 2,
+   "why": "Podcast.",
+   "release": "2026-12-23"
+  },
+  {
+   "vid": "B9-3duh8-TA",
+   "title": "Ep 3 The Developer Who Dropped Out with Craig Dennis",
+   "source": "ShreyTheCray",
+   "group": "Talks and interviews",
+   "stars": 2,
+   "why": "Podcast.",
+   "release": "2026-12-24"
+  },
+  {
+   "vid": "uUhBQLg-tL8",
+   "title": "[Bonus] Ep 4 Creativity in Tech with Craig Dennis",
+   "source": "ShreyTheCray",
+   "group": "Talks and interviews",
+   "stars": 2,
+   "why": "Short podcast bonus.",
+   "release": "2026-12-25"
+  }
+ ]
+}

@@ -1,6 +1,19 @@
 import { allClips, deleteClip } from './db.js';
 
-const state = { topic: null, tech: null, clips: [] };
+const state = { topic: null, tech: null, clips: [], queue: [] };
+const QUEUE_TOPIC = 'Craig Dennis';
+const QUEUE_REMOTE = 'https://raw.githubusercontent.com/azjhf-dev/sabr-ump-poc/main/docs/craig-queue.json';
+
+function todaySG() { return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' }); }
+
+async function loadQueue() {
+  let j = null;
+  try { j = await (await fetch(QUEUE_REMOTE, { cache: 'no-store' })).json(); } catch (e) {}
+  if (!j) { try { j = await (await fetch('craig-queue.json')).json(); } catch (e) {} }
+  const today = todaySG();
+  return ((j && j.items) || []).filter(i => i.release <= today).sort((a, b) => b.release.localeCompare(a.release));
+}
+
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -8,6 +21,7 @@ async function boot() {
   const cfg = await (await fetch('topics.json')).json();
   document.title = cfg.siteName + ' - Library';
   state.clips = await allClips();
+  state.queue = await loadQueue();
   renderTopics(cfg);
   renderChips(cfg);
   renderGrid();
@@ -31,7 +45,7 @@ function renderTopics(cfg) {
   for (const t of cfg.topics) {
     const d = document.createElement('div');
     d.className = 'topic' + (state.topic === t ? ' active' : '');
-    d.innerHTML = `<span>${t}</span><span class="count">${counts.get(t) || 0}</span>`;
+    d.innerHTML = `<span>${t}</span><span class="count">${(t === QUEUE_TOPIC ? state.queue.length : counts.get(t) || 0)}</span>`;
     d.onclick = () => { state.topic = t; renderTopics(cfg); renderGrid(); };
     el.appendChild(d);
   }
@@ -52,9 +66,35 @@ function renderChips(cfg) {
   }
 }
 
+function renderQueue(grid) {
+  $('#empty').hidden = state.queue.length > 0;
+  const stars = n => '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
+  const groups = new Map();
+  for (const i of state.queue) { if (!groups.has(i.group)) groups.set(i.group, []); groups.get(i.group).push(i); }
+  for (const [g, items] of groups) {
+    const h = document.createElement('h3'); h.textContent = g; h.style.cssText = 'grid-column:1/-1;margin:10px 0 0;color:var(--muted);';
+    grid.appendChild(h);
+    for (const i of items) {
+      const card = document.createElement('div'); card.className = 'card';
+      const box = document.createElement('div'); box.style.cssText = 'position:relative;aspect-ratio:16/9;background:#000;cursor:pointer;';
+      const img = document.createElement('img'); img.loading = 'lazy'; img.src = 'https://i.ytimg.com/vi/' + i.vid + '/hqdefault.jpg'; img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+      box.appendChild(img);
+      box.onclick = () => { box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + i.vid + '?autoplay=1" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'; };
+      const meta = document.createElement('div'); meta.className = 'meta';
+      meta.innerHTML = '<p class="title"></p><div class="sub"><span class="src"></span><span class="rt"></span></div><div class="sub why"></div>';
+      meta.querySelector('.title').textContent = i.title;
+      meta.querySelector('.src').textContent = i.source + ' \u00b7 added ' + i.release;
+      meta.querySelector('.rt').textContent = stars(i.stars);
+      meta.querySelector('.why').textContent = i.why + (i.verify ? ' (Presenter unconfirmed.)' : '');
+      card.append(box, meta); grid.appendChild(card);
+    }
+  }
+}
+
 function renderGrid() {
   const grid = $('#grid');
   grid.innerHTML = '';
+  if (state.topic === QUEUE_TOPIC) return renderQueue(grid);
   const clips = state.clips
     .filter(c => state.topic === null || c.topic === state.topic)
     .filter(c => state.tech === null || (c.tags || []).includes(state.tech))
